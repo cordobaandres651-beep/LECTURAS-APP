@@ -1,7 +1,10 @@
 // ====== CONFIG ======
 const API_URL = "https://script.google.com/macros/s/AKfycbzjGTkCzQ_Iv2-VnGWrGJyNCeD5puiG9lk_s8ydZ26iy-56oZrazCCO6U0Kdct4RllL/exec";
 const STORAGE_KEY = "lecturas_app_state_v1";
-
+document.getElementById("formLogin").addEventListener("submit", (e) => {
+  e.preventDefault(); // evita que recargue la página
+  // aquí llamas tu función de login
+});
 // Anomalías (código + descripción)
 const ANOMALIAS = [
   "1 - Predio No Existe",
@@ -442,3 +445,4 @@ function escapeHtml(s) {
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   }[c]));
 }
+

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lecturas - Actas</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0; }
+    label { display:block; margin-top: 10px; font-weight: 600; }
+    input, textarea, select { width: 100%; padding: 10px; margin-top: 6px; border-radius: 8px; border: 1px solid #ccc; }
+    textarea { min-height: 90px; }
+    button { padding: 10px 12px; border: 0; border-radius: 10px; cursor: pointer; }
+    .row { display:flex; gap: 10px; flex-wrap: wrap; }
+    .row > * { flex: 1 1 160px; }
+    .muted { color:#666; font-size: 13px; }
+    .danger { color:#b00020; }
+    .ok { color:#0a7a0a; }
+    .list { margin: 0; padding-left: 18px; }
+    .pill { display:inline-block; padding: 4px 10px; border-radius: 999px; background: #f2f2f2; font-size: 12px; margin-left: 6px; }
+    .thumb { width: 90px; height: 70px; object-fit: cover; border-radius: 10px; border: 1px solid #ddd; }
+    .topbar { display:flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .topbar h2 { margin: 0; }
+    .hidden { display:none; }
+    .btn { background: #111; color: #fff; }
+    .btn2 { background: #eee; }
+    .btn3 { background: #1565c0; color:#fff; }
+    .btnDanger { background:#b00020; color:#fff; }
+    small { display:block; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <h2>Lecturas / Actas</h2>
+    <div>
+      <span id="netStatus" class="pill">...</span>
+      <button class="btn2" id="btnLogout">Salir</button>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="loginView" class="card">
+    <h3>Ingreso</h3>
+    <label>Usuario</label>
+    <input id="loginUser" placeholder="OMAR, BLEYDI..." autocomplete="username" />
+
+    <label>PIN</label>
+    <input id="loginPin" placeholder="1999" inputmode="numeric" type="password" autocomplete="current-password" />
+
+    <div class="row" style="margin-top:12px;">
+      <button class="btn3" id="btnLogin">Entrar</button>
+    </div>
+    <small class="muted">Responsable será el usuario con el que ingreses.</small>
+    <div id="loginMsg" class="muted"></div>
+  </div>
+
+  <!-- APP -->
+  <div id="appView" class="hidden">
+
+    <div class="card">
+      <div class="row">
+        <button class="btn" id="btnNew">+ Nuevo reporte</button>
+        <button class="btn2" id="btnSync">Sincronizar pendientes</button>
+      </div>
+      <div class="muted" id="whoami"></div>
+      <div class="muted" id="syncMsg"></div>
+    </div>
+
+    <!-- FORM -->
+    <div id="formCard" class="card hidden">
+      <h3>Nuevo reporte</h3>
+
+      <label>Código interno (obligatorio, numérico)</label>
+      <input id="codigo" inputmode="numeric" placeholder="Ej: 436044" />
+
+      <div class="row">
+        <div>
+          <label>Lectura activa (obligatorio)</label>
+          <input id="lecturaActiva" inputmode="numeric" placeholder="Ej: 1147" />
+        </div>
+        <div>
+          <label>Lectura reactiva (obligatorio)</label>
+          <input id="lecturaReactiva" inputmode="numeric" placeholder="Ej: 320" />
+        </div>
+      </div>
+
+      <label>Anomalías (obligatorio, mínimo 1)</label>
+      <select id="anomSelect">
+        <option value="">-- Selecciona una anomalía --</option>
+      </select>
+      <div class="row" style="margin-top:8px;">
+        <button class="btn2" id="btnAddAnom">Agregar anomalía</button>
+        <button class="btn2" id="btnClearAnom">Limpiar anomalías</button>
+      </div>
+      <ul id="anomList" class="list"></ul>
+
+      <label>Observación (obligatoria)</label>
+      <textarea id="observacion" placeholder="Describe la novedad..."></textarea>
+
+      <label>Foto predio (obligatoria)</label>
+      <input id="fotoPredio" type="file" accept="image/*" capture="environment" />
+      <div id="predioPreview"></div>
+
+      <label>Foto lectura o anomalía 1 (obligatoria)</label>
+      <input id="fotoL1" type="file" accept="image/*" capture="environment" />
+      <div id="l1Preview"></div>
+
+      <label>Foto lectura o anomalía 2 (obligatoria)</label>
+      <input id="fotoL2" type="file" accept="image/*" capture="environment" />
+      <div id="l2Preview"></div>
+
+      <label>Foto anexos (obligatoria)</label>
+      <input id="fotoAnexos" type="file" accept="image/*" capture="environment" />
+      <div id="anexosPreview"></div>
+
+      <div class="row" style="margin-top:12px;">
+        <button class="btn3" id="btnSaveOffline">Guardar (pendiente/offline)</button>
+        <button class="btnDanger" id="btnCancel">Cancelar</button>
+      </div>
+      <small class="muted">Si hay internet puedes sincronizar de inmediato con el botón “Sincronizar pendientes”.</small>
+      <div id="formMsg" class="muted"></div>
+    </div>
+
+    <!-- LIST -->
+    <div class="card">
+      <h3>Registros</h3>
+      <div class="muted">Pendientes: se guardan en el celular hasta sincronizar. Enviados: incluyen el link del PDF.</div>
+      <div id="list"></div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

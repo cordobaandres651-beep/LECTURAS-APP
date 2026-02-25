@@ -449,4 +449,7 @@ function escapeHtml(s) {
 }
 
 
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.innerText && e.target.innerText.includes("Nuevo")) alert("CLICK NUEVO REPORTE");
+});
 

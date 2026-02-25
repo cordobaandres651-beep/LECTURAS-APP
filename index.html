@@ -38,7 +38,6 @@
     </div>
   </div>
 
-  <!-- APP -->
   <div id="appView">
 
     <div class="card">
@@ -49,12 +48,11 @@
       <div class="muted" id="syncMsg"></div>
     </div>
 
-    <!-- FORM -->
     <div id="formCard" class="card hidden">
       <h3>Nuevo reporte</h3>
 
       <label>Responsable (obligatorio)</label>
-      <select id="responsable">
+      <select id="responsableSelect">
         <option value="">-- Selecciona --</option>
         <option>OMAR</option>
         <option>BLEYDI</option>
@@ -120,7 +118,6 @@
       <div id="formMsg" class="muted"></div>
     </div>
 
-    <!-- LIST -->
     <div class="card">
       <h3>Registros</h3>
       <div class="muted">Pendientes: guardados en el celular. Enviados: con link del PDF.</div>
@@ -129,20 +126,6 @@
 
   </div>
 
-  <script src="app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
-
-<script>
-(async () => {
-  if ('serviceWorker' in navigator) {
-    const regs = await navigator.serviceWorker.getRegistrations();
-    for (const r of regs) await r.unregister();
-  }
-  if (window.caches) {
-    const keys = await caches.keys();
-    for (const k of keys) await caches.delete(k);
-  }
-})();
-</script>
-

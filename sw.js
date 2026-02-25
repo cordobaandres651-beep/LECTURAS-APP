@@ -1,4 +1,4 @@
-const CACHE = "lecturas-app-cache-v1";
+const CACHE = "lecturas-app-cache-v2";
 const ASSETS = ["./", "./index.html", "./app.js"];
 
 self.addEventListener("install", (e) => {
@@ -10,3 +10,4 @@ self.addEventListener("fetch", (e) => {
     caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });
+

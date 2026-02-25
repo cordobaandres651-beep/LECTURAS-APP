@@ -85,9 +85,9 @@ el("btnAddAnom").onclick = addAnom;
 el("btnClearAnom").onclick = clearAnoms;
 
 // Service worker for install/offline shell
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js");
-}
+//if ("serviceWorker" in navigator) {
+  ///navigator.serviceWorker.register("./sw.js");
+//}
 
 // ====== State ======
 let state = loadState();
@@ -278,7 +278,7 @@ async function saveOffline() {
 async function buildRecordFromForm() {
   const session = state.session;
   const c = (codigo.value || "").trim();
-  const rec = {
+  const rec = {na
     local_id: crypto.randomUUID(),
     created_at: new Date().toISOString(),
     codigo_interno: c,
@@ -445,4 +445,5 @@ function escapeHtml(s) {
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   }[c]));
 }
+
 

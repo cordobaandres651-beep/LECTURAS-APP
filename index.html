@@ -35,41 +35,39 @@
     <h2>Lecturas / Actas</h2>
     <div>
       <span id="netStatus" class="pill">...</span>
-      <button class="btn2" id="btnLogout">Salir</button>
     </div>
-  </div>
-
-  <!-- LOGIN -->
-  <div id="loginView" class="card">
-    <h3>Ingreso</h3>
-    <label>Usuario</label>
-    <input id="loginUser" placeholder="OMAR, BLEYDI..." autocomplete="username" />
-
-    <label>PIN</label>
-    <input id="loginPin" placeholder="1999" inputmode="numeric" type="password" autocomplete="current-password" />
-
-    <div class="row" style="margin-top:12px;">
-      <button id="btnEntrar" type="button">Entrar</button>
-    </div>
-    <small class="muted">Responsable será el usuario con el que ingreses.</small>
-    <div id="loginMsg" class="muted"></div>
   </div>
 
   <!-- APP -->
-  <div id="appView" class="hidden">
+  <div id="appView">
 
     <div class="card">
       <div class="row">
-        <button class="btn" id="btnNew">+ Nuevo reporte</button>
-        <button class="btn2" id="btnSync">Sincronizar pendientes</button>
+        <button class="btn" id="btnNew" type="button">+ Nuevo reporte</button>
+        <button class="btn2" id="btnSync" type="button">Sincronizar pendientes</button>
       </div>
-      <div class="muted" id="whoami"></div>
       <div class="muted" id="syncMsg"></div>
     </div>
 
     <!-- FORM -->
     <div id="formCard" class="card hidden">
       <h3>Nuevo reporte</h3>
+
+      <label>Responsable (obligatorio)</label>
+      <select id="responsableSelect">
+        <option value="">-- Selecciona --</option>
+        <option>OMAR</option>
+        <option>BLEYDI</option>
+        <option>JELBER</option>
+        <option>DAVID</option>
+        <option>FARLEY</option>
+        <option>HUGO</option>
+        <option>MAURICIO</option>
+        <option>WILMER</option>
+        <option>ROYER</option>
+        <option>ANDRES</option>
+        <option>WILLIAM</option>
+      </select>
 
       <label>Código interno (obligatorio, numérico)</label>
       <input id="codigo" inputmode="numeric" placeholder="Ej: 436044" />
@@ -90,8 +88,8 @@
         <option value="">-- Selecciona una anomalía --</option>
       </select>
       <div class="row" style="margin-top:8px;">
-        <button class="btn2" id="btnAddAnom">Agregar anomalía</button>
-        <button class="btn2" id="btnClearAnom">Limpiar anomalías</button>
+        <button class="btn2" id="btnAddAnom" type="button">Agregar anomalía</button>
+        <button class="btn2" id="btnClearAnom" type="button">Limpiar anomalías</button>
       </div>
       <ul id="anomList" class="list"></ul>
 
@@ -115,17 +113,17 @@
       <div id="anexosPreview"></div>
 
       <div class="row" style="margin-top:12px;">
-        <button class="btn3" id="btnSaveOffline">Guardar (pendiente/offline)</button>
-        <button class="btnDanger" id="btnCancel">Cancelar</button>
+        <button class="btn3" id="btnSaveOffline" type="button">Guardar (pendiente/offline)</button>
+        <button class="btnDanger" id="btnCancel" type="button">Cancelar</button>
       </div>
-      <small class="muted">Si hay internet puedes sincronizar de inmediato con el botón “Sincronizar pendientes”.</small>
+      <small class="muted">Sin internet: queda pendiente. Con internet: sincroniza y genera PDF.</small>
       <div id="formMsg" class="muted"></div>
     </div>
 
     <!-- LIST -->
     <div class="card">
       <h3>Registros</h3>
-      <div class="muted">Pendientes: se guardan en el celular hasta sincronizar. Enviados: incluyen el link del PDF.</div>
+      <div class="muted">Pendientes: guardados en el celular. Enviados: con link del PDF.</div>
       <div id="list"></div>
     </div>
 

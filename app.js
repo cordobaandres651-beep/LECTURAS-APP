@@ -1,122 +1,58 @@
-// ====== CONFIG ======
 const API_URL = "https://script.google.com/macros/s/AKfycbzjGTkCzQ_Iv2-VnGWrGJyNCeD5puiG9lk_s8ydZ26iy-56oZrazCCO6U0Kdct4RllL/exec";
-const STORAGE_KEY = "lecturas_app_state_v2";
+const STORAGE_KEY = "lecturas_app_state_no_login_v3";
 
-// Anomalías (código + descripción)
 const ANOMALIAS = [
-  "1 - Predio No Existe",
-  "2 - Alto Riesgo Subestación",
-  "4 - Predio Demolido O Abandonado",
-  "5 - Usuario Impide Toma De Lectura",
-  "6 - Predio Desocupado Con Lectura",
-  "7 - Extremadamente Alto",
-  "8 - Predio Desocupado Sin Lectura",
-  "9 - Doble Matricula Con CEDENAR",
-  "10 - Medidor Inexistente O Desconectado",
-  "11 - Medidor No Registrado",
-  "13 - Medidor Volteado o Descolgado",
-  "15 - Posible Irregularidad",
-  "16 - Medidor Dañado",
-  "17 - Sin Sellos En La Tapa Principal",
-  "18 - Display Apagado o Desprogramado",
-  "19 - Registrador No Visible",
-  "20 - Cifras Del Medidor No Corresponden",
-  "21 - Medidor Desconectado Sin Servicio",
-  "22 - Reloj Desconectado Dañado",
-  "23 - Servicio Suspendido Con Medidor",
-  "24 - Servicio Suspendido Sin Medidor",
-  "25 - Dirección Incorrecta",
-  "26 - Medidor Mec. Desconectado",
-  "30 - Desastre Natural",
-  "31 - Zona En Conflicto",
-  "32 - No Hay Acceso al Medidor",
-  "33 - Doble Matricula Con Otro Comercializador",
-  "34 - Derivación Antes del Medidor",
-  "35 - Puente En La Bornera",
-  "36 - Medidor No Registra Consumo",
-  "37 - Sin Sellos En La Tapa Bornera"
+  "1 - Predio No Existe","2 - Alto Riesgo Subestación","4 - Predio Demolido O Abandonado",
+  "5 - Usuario Impide Toma De Lectura","6 - Predio Desocupado Con Lectura","7 - Extremadamente Alto",
+  "8 - Predio Desocupado Sin Lectura","9 - Doble Matricula Con CEDENAR","10 - Medidor Inexistente O Desconectado",
+  "11 - Medidor No Registrado","13 - Medidor Volteado o Descolgado","15 - Posible Irregularidad",
+  "16 - Medidor Dañado","17 - Sin Sellos En La Tapa Principal","18 - Display Apagado o Desprogramado",
+  "19 - Registrador No Visible","20 - Cifras Del Medidor No Corresponden","21 - Medidor Desconectado Sin Servicio",
+  "22 - Reloj Desconectado Dañado","23 - Servicio Suspendido Con Medidor","24 - Servicio Suspendido Sin Medidor",
+  "25 - Dirección Incorrecta","26 - Medidor Mec. Desconectado","30 - Desastre Natural","31 - Zona En Conflicto",
+  "32 - No Hay Acceso al Medidor","33 - Doble Matricula Con Otro Comercializador","34 - Derivación Antes del Medidor",
+  "35 - Puente En La Bornera","36 - Medidor No Registra Consumo","37 - Sin Sellos En La Tapa Bornera"
 ];
 
-// ====== HELPERS ======
 const el = (id) => document.getElementById(id);
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[c]));
-}
-
-function nowISO() {
-  return new Date().toISOString();
-}
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const s = raw ? JSON.parse(raw) : null;
-    return s || { pending: [], sent: [], draftAnoms: [] };
-  } catch {
-    return { pending: [], sent: [], draftAnoms: [] };
-  }
-}
-
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-function uuid() {
-  if (crypto && crypto.randomUUID) return crypto.randomUUID();
-  return "id-" + Math.random().toString(16).slice(2) + "-" + Date.now();
-}
-
-// ====== UI REFS ======
-const appView = el("appView");
+const netStatus = el("netStatus");
 const syncMsg = el("syncMsg");
 const formCard = el("formCard");
 const formMsg = el("formMsg");
 const listDiv = el("list");
-const netStatus = el("netStatus");
 
-// Inputs
-const responsable = el("responsable");
+const responsableSelect = el("responsableSelect");
 const codigo = el("codigo");
 const lecturaActiva = el("lecturaActiva");
 const lecturaReactiva = el("lecturaReactiva");
 const anomSelect = el("anomSelect");
 const anomList = el("anomList");
 const observacion = el("observacion");
+
 const fotoPredio = el("fotoPredio");
 const fotoL1 = el("fotoL1");
 const fotoL2 = el("fotoL2");
 const fotoAnexos = el("fotoAnexos");
 
-// Previews
 const predioPreview = el("predioPreview");
 const l1Preview = el("l1Preview");
 const l2Preview = el("l2Preview");
 const anexosPreview = el("anexosPreview");
 
-// Buttons
-el("btnNew").onclick = () => showForm(true);
-el("btnCancel").onclick = () => showForm(false);
-el("btnSaveOffline").onclick = saveOffline;
-el("btnSync").onclick = syncPending;
-el("btnAddAnom").onclick = addAnom;
-el("btnClearAnom").onclick = clearAnoms;
+el("btnNew").addEventListener("click", () => showForm(true));
+el("btnCancel").addEventListener("click", () => showForm(false));
+el("btnSaveOffline").addEventListener("click", saveOffline);
+el("btnSync").addEventListener("click", syncPending);
+el("btnAddAnom").addEventListener("click", addAnom);
+el("btnClearAnom").addEventListener("click", clearAnoms);
 
-// ====== STATE ======
 let state = loadState();
 
-// ====== BOOT ======
 renderNet();
 window.addEventListener("online", renderNet);
 window.addEventListener("offline", renderNet);
 
-// populate anomalies
 for (const a of ANOMALIAS) {
   const opt = document.createElement("option");
   opt.value = a;
@@ -124,7 +60,6 @@ for (const a of ANOMALIAS) {
   anomSelect.appendChild(opt);
 }
 
-// previews
 wirePreview(fotoPredio, predioPreview);
 wirePreview(fotoL1, l1Preview);
 wirePreview(fotoL2, l2Preview);
@@ -133,7 +68,6 @@ wirePreview(fotoAnexos, anexosPreview);
 showForm(false);
 renderList();
 
-// ====== UI FUNCTIONS ======
 function renderNet() {
   const online = navigator.onLine;
   netStatus.textContent = online ? "Con internet" : "Sin internet";
@@ -142,18 +76,17 @@ function renderNet() {
 
 function showForm(show) {
   formCard.classList.toggle("hidden", !show);
-  formMsg.textContent = "";
   if (show) resetForm();
 }
 
 function resetForm() {
-  responsable.value = "";
   codigo.value = "";
   lecturaActiva.value = "";
   lecturaReactiva.value = "";
   observacion.value = "";
   state.draftAnoms = [];
   renderAnoms();
+
   fotoPredio.value = "";
   fotoL1.value = "";
   fotoL2.value = "";
@@ -162,6 +95,9 @@ function resetForm() {
   l1Preview.innerHTML = "";
   l2Preview.innerHTML = "";
   anexosPreview.innerHTML = "";
+
+  formMsg.textContent = "";
+  formMsg.className = "muted";
   saveState();
 }
 
@@ -182,8 +118,7 @@ function clearAnoms() {
 
 function renderAnoms() {
   anomList.innerHTML = "";
-  const arr = state.draftAnoms || [];
-  for (const a of arr) {
+  for (const a of (state.draftAnoms || [])) {
     const li = document.createElement("li");
     li.textContent = a;
     anomList.appendChild(li);
@@ -191,7 +126,7 @@ function renderAnoms() {
 }
 
 function wirePreview(fileInput, container) {
-  fileInput.addEventListener("change", async () => {
+  fileInput.addEventListener("change", () => {
     container.innerHTML = "";
     const f = fileInput.files && fileInput.files[0];
     if (!f) return;
@@ -203,41 +138,30 @@ function wirePreview(fileInput, container) {
   });
 }
 
-// ====== VALIDATION ======
 function validateForm() {
-  const r = (responsable.value || "").trim();
-  if (!r) return "Responsable es obligatorio.";
-
+  if (!responsableSelect.value) return "Responsable es obligatorio.";
   const c = (codigo.value || "").trim();
   if (!/^\d+$/.test(c)) return "Código interno debe ser numérico.";
-
   if (!(lecturaActiva.value || "").trim()) return "Lectura activa es obligatoria.";
   if (!(lecturaReactiva.value || "").trim()) return "Lectura reactiva es obligatoria.";
-
   if (!state.draftAnoms || state.draftAnoms.length < 1) return "Debes seleccionar al menos 1 anomalía.";
   if (!(observacion.value || "").trim()) return "Observación es obligatoria.";
-
   if (!fotoPredio.files[0]) return "Falta foto predio.";
   if (!fotoL1.files[0]) return "Falta foto lectura/anomalía 1.";
   if (!fotoL2.files[0]) return "Falta foto lectura/anomalía 2.";
   if (!fotoAnexos.files[0]) return "Falta foto anexos.";
-
   return null;
 }
 
-// ====== IMAGES ======
-function loadImage(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = url;
-  });
-}
-
 async function fileToBase64Compressed(file, maxW = 1280, quality = 0.75) {
-  const img = await loadImage(file);
+  const img = await new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = url;
+  });
+
   const scale = Math.min(1, maxW / img.width);
   const w = Math.round(img.width * scale);
   const h = Math.round(img.height * scale);
@@ -245,19 +169,22 @@ async function fileToBase64Compressed(file, maxW = 1280, quality = 0.75) {
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0, w, h);
-
-  // devuelve data:image/jpeg;base64,....
+  canvas.getContext("2d").drawImage(img, 0, 0, w, h);
   return canvas.toDataURL("image/jpeg", quality);
 }
 
-// ====== RECORD BUILD ======
-async function buildRecordFromForm() {
+async function saveOffline() {
+  const err = validateForm();
+  if (err) {
+    formMsg.textContent = err;
+    formMsg.className = "danger";
+    return;
+  }
+
   const rec = {
-    local_id: uuid(),
-    created_at: nowISO(),
-    responsable: (responsable.value || "").trim(),
+    local_id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
+    created_at: new Date().toISOString(),
+    responsable: responsableSelect.value.trim().toUpperCase(),
     codigo_interno: (codigo.value || "").trim(),
     lectura_activa: (lecturaActiva.value || "").trim(),
     lectura_reactiva: (lecturaReactiva.value || "").trim(),
@@ -271,22 +198,7 @@ async function buildRecordFromForm() {
     pdf_url: null,
     server_id: null
   };
-  return rec;
-}
 
-// ====== OFFLINE SAVE ======
-async function saveOffline() {
-  const err = validateForm();
-  if (err) {
-    formMsg.textContent = err;
-    formMsg.className = "danger";
-    return;
-  }
-
-  formMsg.textContent = "Guardando...";
-  formMsg.className = "muted";
-
-  const rec = await buildRecordFromForm();
   state.pending = state.pending || [];
   state.pending.unshift(rec);
   saveState();
@@ -298,18 +210,15 @@ async function saveOffline() {
   syncMsg.className = "ok";
 }
 
-// ====== LIST RENDER ======
 function renderList() {
-  state.pending = state.pending || [];
-  state.sent = state.sent || [];
-
+  const pending = state.pending || [];
+  const sent = state.sent || [];
   const items = [
-    ...state.pending.map(r => ({ ...r, _bucket: "PENDIENTE" })),
-    ...state.sent.map(r => ({ ...r, _bucket: "ENVIADO" }))
+    ...pending.map(r => ({...r, _bucket:"PENDIENTE"})),
+    ...sent.map(r => ({...r, _bucket:"ENVIADO"}))
   ];
 
   listDiv.innerHTML = "";
-
   if (items.length === 0) {
     listDiv.innerHTML = <div class="muted">Aún no hay registros.</div>;
     return;
@@ -319,38 +228,35 @@ function renderList() {
     const card = document.createElement("div");
     card.className = "card";
 
-    const title = document.createElement("div");
-    title.innerHTML = <b>${escapeHtml(r.codigo_interno)}</b> — ${escapeHtml(r._bucket)} <span class="muted">(${escapeHtml(r.responsable)})</span>;
-    card.appendChild(title);
-
-    const meta = document.createElement("div");
-    meta.className = "muted";
-    meta.textContent = new Date(r.created_at).toLocaleString();
-    card.appendChild(meta);
-
-    const an = document.createElement("div");
-    const anoms = (r["anomalías"] || []).map(x => <li>${escapeHtml(x)}</li>).join("");
-    an.innerHTML = <div style="margin-top:8px"><b>Anomalías:</b><ul>${anoms}</ul></div>;
-    card.appendChild(an);
+    card.innerHTML = `
+      <div><b>${escapeHtml(r.codigo_interno)}</b> <span class="pill">${r._bucket}</span> <span class="muted">(${escapeHtml(r.responsable)})</span></div>
+      <div class="muted">${new Date(r.created_at).toLocaleString()}</div>
+      <div class="muted">Anomalías:</div>
+      <ul class="list">${(r["anomalías"]||[]).map(x => <li>${escapeHtml(x)}</li>).join("")}</ul>
+    `;
 
     const row = document.createElement("div");
     row.className = "row";
     row.style.marginTop = "10px";
 
     if (r._bucket === "PENDIENTE") {
-      const b1 = document.createElement("button");
-      b1.className = "btn2";
-      b1.type = "button";
-      b1.textContent = "Eliminar";
-      b1.onclick = () => deletePending(r.local_id);
-      row.appendChild(b1);
+      const b = document.createElement("button");
+      b.className = "btn2";
+      b.textContent = "Eliminar";
+      b.type = "button";
+      b.onclick = () => {
+        state.pending = (state.pending || []).filter(x => x.local_id !== r.local_id);
+        saveState();
+        renderList();
+      };
+      row.appendChild(b);
     } else {
-      const b2 = document.createElement("button");
-      b2.className = "btn3";
-      b2.type = "button";
-      b2.textContent = "Ver PDF";
-      b2.onclick = () => window.open(r.pdf_url, "_blank");
-      row.appendChild(b2);
+      const b = document.createElement("button");
+      b.className = "btn3";
+      b.textContent = "Ver PDF";
+      b.type = "button";
+      b.onclick = () => window.open(r.pdf_url, "_blank");
+      row.appendChild(b);
     }
 
     card.appendChild(row);
@@ -358,13 +264,6 @@ function renderList() {
   }
 }
 
-function deletePending(localId) {
-  state.pending = (state.pending || []).filter(x => x.local_id !== localId);
-  saveState();
-  renderList();
-}
-
-// ====== SYNC ======
 async function syncPending() {
   if (!navigator.onLine) {
     syncMsg.textContent = "No hay internet. Conéctate y vuelve a intentar.";
@@ -383,7 +282,6 @@ async function syncPending() {
   syncMsg.className = "muted";
 
   const stillPending = [];
-
   for (const rec of state.pending) {
     try {
       const payload = {
@@ -406,17 +304,17 @@ async function syncPending() {
       });
 
       const data = await res.json();
-      if (!data.ok) throw new Error(data.error || "Error desconocido");
+      if (!data.ok) throw new Error(data.error || "Error");
 
       rec.status = "ENVIADO";
       rec.pdf_url = data.pdf_url;
       rec.server_id = data.id;
 
+      state.sent = state.sent || [];
       state.sent.unshift(rec);
       saveState();
     } catch (e) {
       stillPending.push(rec);
-      console.error("SYNC ERROR:", e);
     }
   }
 
@@ -428,7 +326,26 @@ async function syncPending() {
     syncMsg.textContent = "Listo: todo enviado y PDF generado.";
     syncMsg.className = "ok";
   } else {
-    syncMsg.textContent = Se enviaron algunos. Quedaron ${stillPending.length} pendientes (revisa Apps Script / conexión).;
+    syncMsg.textContent = Quedaron ${stillPending.length} pendientes.;
     syncMsg.className = "danger";
   }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { pending: [], sent: [], draftAnoms: [] };
+  } catch {
+    return { pending: [], sent: [], draftAnoms: [] };
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
 }
